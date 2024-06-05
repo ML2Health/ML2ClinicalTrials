@@ -1,4 +1,4 @@
-# ML4Trial: Machine Learning-Ready Clinical Trial Datasets
+# AI4Trial: AI-Ready Clinical Trial Datasets
 
 ## 🚀 Installation 
 
