@@ -18,8 +18,5 @@ If you wish to contribute, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md
 ## 💼 Support
 If you need help with the tool, you can raise an issue on our GitHub issue tracker. For other questions, please contact our team. 
 
-## 📞 Contact 
-Please contact Dr. Jintai Chen at jtchen721@gmail.com for help or submit an issue. 
-
 
 
