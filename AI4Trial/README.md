@@ -1,5 +1,7 @@
 # Trialbench: Multi-modal artificial intelligence-ready clinical trial datasets
 
+This repository contains the validation part of article [Trialbench: Multi-modal artificial intelligence-ready clinical trial datasets](https://arxiv.org/abs/2407.00631).
+
 ## 🚀 Installation 
 
 you can install the remaining dependencies for our package by executing:
