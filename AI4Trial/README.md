@@ -10,7 +10,11 @@ Please note, our package has been tested and confirmed to work with Python 3.8. 
 
 
 ## 💻 Usage (3 lines of code)
-
+To run mortality rate prediction task, you can use the following code.
+```
+cd AI4Trial
+python learn_multi_model.py --base_name mortality_rate --phase 'Phase 1' --exp Temp
+```
 
 ## 🤝 Contributing
 If you wish to contribute, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file. We welcome pull requests for bug fixes, feature requests, and improvements to our code. 
