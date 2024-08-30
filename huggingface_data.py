@@ -1,7 +1,5 @@
 # downloading data from huggingface
 
-# account: https://huggingface.co/datasets/ML2Healthcare/ClinicalTrialDataset
-
 from datasets import load_dataset
 import pandas as pd
 import numpy as np
