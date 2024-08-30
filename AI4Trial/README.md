@@ -1,4 +1,4 @@
-# AI4Trial: AI-Ready Clinical Trial Datasets
+# Trialbench: Multi-modal artificial intelligence-ready clinical trial datasets
 
 ## 🚀 Installation 
 
