@@ -9,6 +9,7 @@
 from datasets import load_dataset
 import torch, csv, os
 import pandas as pd
+import numpy as np
 from torch.utils import data 
 from torch.utils.data.dataloader import default_collate
 from models.molecule_encode import smiles2mpnnfeature
@@ -17,6 +18,7 @@ from models.protocol_encode import protocol2feature, load_sentence_2_vec
 sentence2vec = load_sentence_2_vec() 
 
 def Read_from_huggingface(target, phase):
+    phase = 'all' if phase is None else phase
     dataset = load_dataset('ML2Healthcare/ClinicalTrialDataset')
     dataset = dataset['train'].to_dict()
     if phase == 'all':
@@ -45,6 +47,10 @@ def Read_from_huggingface(target, phase):
         X_test = pd.concat(X_test, axis=0)
         y_test = pd.concat(y_test, axis=0)
 
+    if 'nctid' not in X_train.columns:
+        X_train.rename(columns={'ntcid': 'nctid'}, inplace=True)
+        X_test.rename(columns={'ntcid': 'nctid'}, inplace=True)
+    print(X_train.columns)
     return X_train, y_train, X_test, y_test
 
 class ADMET_Dataset(data.Dataset):
@@ -135,10 +141,10 @@ def csv_three_feature_2_complete_dataloader(csvfile, shuffle, batch_size):
 
 
 def smiles_txt_to_2lst(smiles_txt_file):
-    X = pd.read_csv(smiles_txt_file)
-    y = pd.read_csv(smiles_txt_file.replace('_x.csv', '_y.csv'))['label']
-    smiles_lst = X['smiless'].fillna('[]').tolist()
-    label_lst = y.tolist()
+    with open(smiles_txt_file, 'r') as fin:
+        lines = fin.readlines() 
+    smiles_lst = [line.split()[0] for line in lines]
+    label_lst = [int(line.split()[1]) for line in lines]
     return smiles_lst, label_lst 
 
 def generate_admet_dataloader_lst(batch_size):

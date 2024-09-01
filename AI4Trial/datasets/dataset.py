@@ -11,7 +11,7 @@ from category_encoders import LeaveOneOutEncoder
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.dataloader import default_collate
 from models.text_encode import text2feature
-from datasets.utils import smiles_txt_to_lst, protocol2feature, icdcode_text_2_lst_of_lst, sentence2vec, Read_from_huggingface
+from dataset.utils import smiles_txt_to_lst, protocol2feature, icdcode_text_2_lst_of_lst, sentence2vec, Read_from_huggingface
 from models.mesh_encode import mesh_term2feature
 
 class Trial_Dataset_tabular(data.Dataset):
@@ -107,7 +107,8 @@ def quantile_transform(X_train, X_valid, X_test):
 def mortality_rate(phase):
     target = 'mortality-rate-prediction'
     X_train, y_train, X_test, y_test = Read_from_huggingface(target, phase)
-    
+
+
     # Randomly split the training set into a validation set
     X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
@@ -174,8 +175,11 @@ def mortality_rate(phase):
 
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
+    y_train = y_train['mortality_rate']
+    y_valid = y_valid['mortality_rate']
+    y_test = y_test['mortality_rate']
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.values.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -187,7 +191,7 @@ def mortality_rate(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_2_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.values.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -199,7 +203,7 @@ def mortality_rate(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_2_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.values.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -216,7 +220,9 @@ def mortality_rate(phase):
 def mortality_rate_yn(phase):
     target = 'mortality-rate-prediction'
     X_train, y_train, X_test, y_test = Read_from_huggingface(target, phase)
-    
+    y_train = y_train['Y/N']
+    y_test = y_test['Y/N']
+
     # Randomly split the training set into a validation set
     X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
     
@@ -278,7 +284,7 @@ def mortality_rate_yn(phase):
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -290,7 +296,7 @@ def mortality_rate_yn(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -302,7 +308,7 @@ def mortality_rate_yn(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -320,6 +326,7 @@ def mortality_rate_yn(phase):
 def serious_adverse_rate(phase):
     target = 'adverse-event-rate-prediction'
     X_train, y_train, X_test, y_test = Read_from_huggingface(target, phase)
+
 
     if 'nctid' not in X_train.columns:
         X_train.rename(columns={'ntcid': 'nctid'}, inplace=True)
@@ -391,9 +398,12 @@ def serious_adverse_rate(phase):
         X_test[c].fillna(0, inplace=True)
 
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
-
+    
+    y_train = y_train['serious_adverse_rate']
+    y_valid = y_valid['serious_adverse_rate']
+    y_test = y_test['serious_adverse_rate']
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.values.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -405,7 +415,7 @@ def serious_adverse_rate(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_2_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.values.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -417,7 +427,7 @@ def serious_adverse_rate(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_2_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.values.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -507,7 +517,7 @@ def serious_adverse_rate_yn(phase):
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -519,7 +529,7 @@ def serious_adverse_rate_yn(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -531,7 +541,7 @@ def serious_adverse_rate_yn(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -548,7 +558,8 @@ def serious_adverse_rate_yn(phase):
 def patient_dropout_rate(phase):
     target = 'patient_dropout_rate'
     X_train, y_train, X_test, y_test = Read_from_huggingface(target, phase)
-    
+
+
     if 'nctid' not in X_train.columns:
         X_train.rename(columns={'ntcid': 'nctid'}, inplace=True)
         X_test.rename(columns={'ntcid': 'nctid'}, inplace=True)
@@ -620,8 +631,12 @@ def patient_dropout_rate(phase):
 
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
+    y_train = y_train['dropout_rate']
+    y_valid = y_valid['dropout_rate']
+    y_test = y_test['dropout_rate']
+
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.values.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -633,7 +648,7 @@ def patient_dropout_rate(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_2_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.values.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -645,7 +660,7 @@ def patient_dropout_rate(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_2_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.values.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -730,7 +745,7 @@ def patient_dropout_rate_yn(phase):
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -742,7 +757,7 @@ def patient_dropout_rate_yn(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -754,7 +769,7 @@ def patient_dropout_rate_yn(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -847,7 +862,7 @@ def duration(phase):
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -859,7 +874,7 @@ def duration(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -871,7 +886,7 @@ def duration(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -956,7 +971,7 @@ def outcome(phase):
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -968,7 +983,7 @@ def outcome(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -980,7 +995,7 @@ def outcome(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -1075,7 +1090,7 @@ def failure_reason(phase):
     mesh_term = [c for c in X_train.columns if 'mesh_term' in c]
 
     # X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features] = quantile_transform(X_train[numerical_features], X_valid[numerical_features], X_test[numerical_features])
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_icdcode_lst = X_train['icdcode'].fillna('["unknown"]').tolist()
     train_drugs_lst = X_train['intervention/intervention_name'].tolist()
@@ -1087,7 +1102,7 @@ def failure_reason(phase):
     train_dataset = Trial_Dataset_tabular(train_nctid_lst, train_label_lst, train_smiles_lst, train_icdcode_lst, train_criteria_lst, train_tabular_lst, train_text_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=trial_tabular_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_icdcode_lst = X_valid['icdcode'].fillna('["unknown"]').tolist()
     valid_drugs_lst = X_valid['intervention/intervention_name'].tolist()
@@ -1099,7 +1114,7 @@ def failure_reason(phase):
     valid_dataset = Trial_Dataset_tabular(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_icdcode_lst, valid_criteria_lst, valid_tabular_lst, valid_text_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=trial_tabular_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_icdcode_lst = X_test['icdcode'].fillna('["unknown"]').tolist()
     test_drugs_lst = X_test['intervention/intervention_name'].tolist()
@@ -1167,21 +1182,21 @@ def dose(phase):
         mesh_lst = [mesh_term2feature(i[3]) for i in x]
         return [nctid_lst, label_vec, smiles_lst, mesh_lst]
 
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.values.tolist()
     train_smiles_lst = X_train['smiless'].fillna('["unknown"]').tolist()
     train_mesh_lst = X_train[mesh_term].values.tolist()
     train_dataset = Dose_dataset(train_nctid_lst, train_label_lst, train_smiles_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=dose_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.values.tolist()
     valid_smiles_lst = X_valid['smiless'].fillna('["unknown"]').tolist()
     valid_mesh_lst = X_valid[mesh_term].values.tolist()
     valid_dataset = Dose_dataset(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=dose_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.values.tolist()
     test_smiles_lst = X_test['smiless'].fillna('["unknown"]').tolist()
     test_mesh_lst = X_test[mesh_term].values.tolist()
@@ -1225,21 +1240,21 @@ def dose_cls(phase):
         mesh_lst = [mesh_term2feature(i[3]) for i in x]
         return [nctid_lst, label_vec, smiles_lst, mesh_lst]
 
-    train_nctid_lst = X_train['nctid'].tolist()
+    train_nctid_lst = X_train.index.tolist()
     train_label_lst = y_train.tolist()
     train_smiles_lst = X_train['smiless'].fillna('["unknown"]').tolist()
     train_mesh_lst = X_train[mesh_term].values.tolist()
     train_dataset = Dose_dataset(train_nctid_lst, train_label_lst, train_smiles_lst, train_mesh_lst)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, collate_fn=dose_collate_fn)
     
-    valid_nctid_lst = X_valid['nctid'].tolist()
+    valid_nctid_lst = X_valid.index.tolist()
     valid_label_lst = y_valid.tolist()
     valid_smiles_lst = X_valid['smiless'].fillna('["unknown"]').tolist()
     valid_mesh_lst = X_valid[mesh_term].values.tolist()
     valid_dataset = Dose_dataset(valid_nctid_lst, valid_label_lst, valid_smiles_lst, valid_mesh_lst)
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False, collate_fn=dose_collate_fn)
 
-    test_nctid_lst = X_test['nctid'].tolist()
+    test_nctid_lst = X_test.index.tolist()
     test_label_lst = y_test.tolist()
     test_smiles_lst = X_test['smiless'].fillna('["unknown"]').tolist()
     test_mesh_lst = X_test[mesh_term].values.tolist()
