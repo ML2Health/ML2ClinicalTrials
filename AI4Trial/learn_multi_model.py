@@ -3,7 +3,8 @@ import torch, os, sys
 torch.manual_seed(0) 
 sys.path.append('.')
 sys.path.append('..')
-from datasets.dataset import *
+from dataset.dataset import *
+from dataset.utils import *
 from models.molecule_encode import MPNN, ADMET 
 from models.icdcode_encode import GRAM, build_icdcode2ancestor_dict
 from models.protocol_encode import Protocol_Embedding

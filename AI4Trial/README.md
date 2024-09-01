@@ -1,12 +1,10 @@
-# Trialbench: Multi-modal artificial intelligence-ready clinical trial datasets
-
-This repository contains the validation part of article [Trialbench: Multi-modal artificial intelligence-ready clinical trial datasets](https://arxiv.org/abs/2407.00631).
+# AI4Trial: AI-Ready Clinical Trial Datasets
 
 ## 🚀 Installation 
 
 you can install the remaining dependencies for our package by executing:
 ```
-pip install .
+pip install -r requirements.txt
 ```
 Please note, our package has been tested and confirmed to work with Python 3.8. We recommend using this version to ensure compatibility and optimal performance.
 
@@ -18,8 +16,8 @@ cd AI4Trial
 python learn_multi_model.py --base_name mortality_rate --phase 'Phase 1' --exp Temp
 ```
 
-## 🤝 Contributing
-If you wish to contribute, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file. We welcome pull requests for bug fixes, feature requests, and improvements to our code. 
-
 ## 💼 Support
 If you need help with the tool, you can raise an issue on our GitHub issue tracker. For other questions, please contact our team. 
+
+
+
