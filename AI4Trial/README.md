@@ -13,7 +13,7 @@ Please note, our package has been tested and confirmed to work with Python 3.7. 
 Download the relevant supporting documents in the [link](https://zjueducn-my.sharepoint.com/:f:/g/personal/yaojunhu_zju_edu_cn/EsgIPd3QyjVMipw6tkPv3hoBRk83HqO4X_laZhf6nD87IA?e=0O8fFi).
 
 
-## 💻 Usage (3 lines of code)
+## 💻 Usage 
 To run mortality rate prediction task, you can use the following code.
 ```
 cd AI4Trial
