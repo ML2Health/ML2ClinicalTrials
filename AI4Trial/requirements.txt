@@ -4,7 +4,6 @@ async-timeout==4.0.3
 asynctest==0.13.0
 attrs==23.2.0
 category-encoders==2.6.3
-certifi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_477u68wvzm/croot/certifi_1671487773341/work/certifi
 charset-normalizer==3.3.2
 cycler==0.11.0
 datasets==2.13.2

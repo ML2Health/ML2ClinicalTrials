@@ -15,4 +15,5 @@ if __name__ == '__main__':
         table_name = f"{task}_{phase}_{type_}"
         print(table_name)
         data[table_name] = table
+        table.to_csv(f"Trialbench/{table_name}.csv", index=False)
 

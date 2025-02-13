@@ -1,5 +1,6 @@
 # AI4Trial: AI-Ready Clinical Trial Datasets
 
+
 ## 🚀 Installation 
 
 You can install the remaining dependencies for our package by executing:
@@ -10,7 +11,11 @@ Please note, our package has been tested and confirmed to work with Python 3.7. 
 
 ## Download
 
-Download the relevant supporting documents in the [link](https://zjueducn-my.sharepoint.com/:f:/g/personal/yaojunhu_zju_edu_cn/EsgIPd3QyjVMipw6tkPv3hoBRk83HqO4X_laZhf6nD87IA?e=0O8fFi).
+Download the relevant supporting documents in the [link](https://zjueducn-my.sharepoint.com/:f:/g/personal/yaojunhu_zju_edu_cn/EsgIPd3QyjVMipw6tkPv3hoBRk83HqO4X_laZhf6nD87IA?e=0O8fFi) and put them in ```data/```.
+
+## Trialbench
+
+This reposity load Trialbench from [Huggingface](https://huggingface.co/datasets/ML2Healthcare/ClinicalTrialDataset). To quickly understand the data, we also provide some toy samples in [Trialbench]()
 
 
 ## 💻 Usage 
