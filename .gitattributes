@@ -1,4 +1,2 @@
-Trialbench/adverse-event-rate-prediction/*.csv filter=lfs diff=lfs merge=lfs -text
-Trialbench/description-summary/*.csv filter=lfs diff=lfs merge=lfs -text
-Trialbench/eligibility-criteria-design/*.csv filter=lfs diff=lfs merge=lfs -text
-Trialbench/drug-dose-prediction/*.csv filter=lfs diff=lfs merge=lfs -text
+Trialbench/description-summary/All/*.csv filter=lfs diff=lfs merge=lfs -text
+Trialbench/eligibility-criteria-design/All/*.csv filter=lfs diff=lfs merge=lfs -text
