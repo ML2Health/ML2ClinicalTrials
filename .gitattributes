@@ -1,2 +1,2 @@
 Trialbench/description-summary/All/*.csv filter=lfs diff=lfs merge=lfs -text
-Trialbench/eligibility-criteria-design/All/*.csv filter=lfs diff=lfs merge=lfs -text
+Trialbench/eligibility-criteria-design/All/train.csv filter=lfs diff=lfs merge=lfs -text
