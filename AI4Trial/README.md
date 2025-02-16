@@ -1,4 +1,7 @@
-# AI4Trial: AI-Ready Clinical Trial Datasets
+# TrialBench: AI-Ready Clinical Trial Datasets
+
+
+<p align="center"><img src="./trial.pdf" alt="logo" width="810px" /></p>
 
 This repository contains code for training and testing benchmark models on Trialbench datasets. The provided scripts facilitate the evaluation of various machine learning algorithms, enabling researchers to assess their performance on different clinical trial phases and tasks.
 
